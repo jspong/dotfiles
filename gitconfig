@@ -1,0 +1,12 @@
+[push]
+	default = nothing
+[core]
+	ignorecase = false
+[user]
+	email = jspong@gmail.com
+	name = John Spong
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
