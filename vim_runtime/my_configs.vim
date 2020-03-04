@@ -7,3 +7,6 @@ set number
 
 setlocal spell spelllang=en_us
 highlight SpellBad cterm=undercurl,underline,bold
+
+let g:syntastic_markdown_mdl_exec = 'markdownlint'
+let g:syntastic_markdown_mdl_args = ''
