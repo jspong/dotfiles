@@ -1,5 +1,6 @@
 Dotfiles installer.
 
-To run: ```bash
+To run:
+```bash
 source install.sh
 ```
