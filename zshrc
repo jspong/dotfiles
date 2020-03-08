@@ -132,7 +132,7 @@ function notes() {
     NOTES=${TODAY}.md
     vim ${NOTES}
     git add ${NOTES}
-    git commit -m "Notes for ${TODAY}"
+    git commit -m ${1:-"Notes for ${TODAY}"}
     popd
 }
 
