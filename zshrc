@@ -127,12 +127,13 @@ function unpushed() {
 
 function notes() {
     GITDIR=${HOME}/github/jspong/notes
-    cd ${GITDIR}
+    pushd ${GITDIR}
     TODAY=$(date +'%F')
     NOTES=${TODAY}.md
     vim ${NOTES}
     git add ${NOTES}
     git commit -m "Notes for ${TODAY}"
+    popd
 }
 
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
