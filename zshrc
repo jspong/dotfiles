@@ -125,4 +125,9 @@ function unpushed() {
     git log ${REMOTE}/${BRANCH}..HEAD
 }
 
+function notes() {
+    GITDIR=${HOME}/github/jspong/notes
+    vim ${GITDIR}/$(date +'%F').md
+}
+
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
