@@ -115,8 +115,9 @@ function gitd () {
     cd "$HOME/github/confluent/$1"
 }
 
-function gpob () {
-    git push origin `git rev-parse --abbrev-ref HEAD`
+function gpo () {
+    BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
+    git push origin ${BRANCH}
 }
 
 function pwb() {
