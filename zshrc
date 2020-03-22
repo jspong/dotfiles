@@ -130,15 +130,36 @@ function unpushed() {
     git log ${REMOTE}/${BRANCH}..HEAD
 }
 
+function notesToTodo() {
+    git diff | grep +todo: | sed "s/+todo:/- [ ] ($1):/" >> todo.md
+}
+
 function notes() {
     GITDIR=${HOME}/github/jspong/notes
-    pushd ${GITDIR}
-    TODAY=$(date +'%F')
-    NOTES=${TODAY}.md
+    PREV_DIR=$PWD
+    cd $GITDIR
+    git commit -a -m "Cleaning up lingering notes" 2>&1 >/dev/null
+    if [[ -n "$1" ]]
+    then 
+        DATE=$(fuzzy_date.py $1)
+        if [ $? -eq 1 ]
+        then
+            cd $PREV_DIR
+            return 1
+        fi
+        MSG="Notes for '$1' ($DATE)"
+    else
+        DATE=$(date +'%F')
+        MSG="Notes for $DATE"
+    fi
+
+    NOTES=${DATE}.md
     vim ${NOTES}
-    git add ${NOTES}
-    git commit -m ${1:-"Notes for ${TODAY}"}
-    popd
+    notesToTodo $DATE
+    git add ${NOTES} 2>&1 >/dev/null
+    git add todo.md 2>&1 >/dev/null
+    git commit -m ${2:-$MSG} 2>&1 >/dev/null
+    cd $PREV_DIR
 }
 
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
