@@ -120,6 +120,12 @@ function gpo () {
     git push origin ${BRANCH}
 }
 
+function rebase-branch() {
+    BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
+    ROOT=${2:-master}
+    git rebase -i $(git merge-base $ROOT $BRANCH)
+}
+
 function pwb() {
     git branch | grep '*' | cut -d' ' -f2
 }
@@ -130,35 +136,31 @@ function unpushed() {
     git log ${REMOTE}/${BRANCH}..HEAD
 }
 
-function notesToTodo() {
-    git diff | grep +todo: | sed "s/+todo:/- [ ] ($1):/" >> todo.md
-}
-
 function notes() {
     GITDIR=${HOME}/github/jspong/notes
     PREV_DIR=$PWD
     cd $GITDIR
-    git commit -a -m "Cleaning up lingering notes" 2>&1 >/dev/null
-    if [[ -n "$1" ]]
-    then 
-        DATE=$(fuzzy_date.py $1)
-        if [ $? -eq 1 ]
-        then
-            cd $PREV_DIR
-            return 1
-        fi
-        MSG="Notes for '$1' ($DATE)"
-    else
-        DATE=$(date +'%F')
-        MSG="Notes for $DATE"
+
+    git commit --all --message="Cleaning up lingering notes" 2>&1 >/dev/null
+
+    1=${1:-today}
+    DATE=$(python -c "from dateparser import parse; print(parse('$1').strftime('%F'))")
+    if [ $? -eq 1 ]
+    then
+        cd $PREV_DIR
+        return 1
     fi
 
     NOTES=${DATE}.md
-    vim ${NOTES}
-    notesToTodo $DATE
-    git add ${NOTES} 2>&1 >/dev/null
-    git add todo.md 2>&1 >/dev/null
-    git commit -m ${2:-$MSG} 2>&1 >/dev/null
+    touch ${NOTES}
+    git add ${NOTES}
+    vim -c '$pu=strftime('"'%c')" ${NOTES}
+    git diff | grep +todo: | sed "s/+todo:/- [ ] ($DATE):/" >> todo.md
+    git diff | grep +progress: | sed "s/+progress:/- progress $DATE:/" >> ppp.md
+    git diff | grep +problem: | sed "s/+problem:/- problem $DATE:/" >> ppp.md
+    git diff | grep +plan: | sed "s/+plan:/- plan $DATE:/" >> ppp.md
+    git diff | grep +buy: | sed "s/+buy: \(.*\)/- [ ] \1 <!-- $DATE -->/" >> shopping_list.md
+    git commit --all --message=${2:-$MSG} 2>&1 >/dev/null
     cd $PREV_DIR
 }
 
