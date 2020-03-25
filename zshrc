@@ -117,7 +117,7 @@ function gitd () {
 
 function gpo () {
     BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
-    git push origin ${BRANCH}
+    git push -u origin ${BRANCH}
 }
 
 function rebase-branch() {
