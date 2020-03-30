@@ -161,7 +161,7 @@ function notes() {
     git diff | grep +plan: | sed "s/+plan:/- plan $DATE:/" >> ppp.md
     git diff | grep +buy: | sed "s/+buy: \(.*\)/- [ ] \1 <!-- $DATE -->/" >> shopping_list.md
 
-    MSG="Notes for ${DATE:-$1}
+    MSG="Notes for ${DATE:-$1}"
     git commit --all --message=${2:-$MSG} 2>&1 >/dev/null
     cd $PREV_DIR
 }
