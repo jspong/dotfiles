@@ -154,7 +154,7 @@ function notes() {
     NOTES=${DATE}.md
     touch ${NOTES}
     git add ${NOTES}
-    vim -c '$pu=strftime('"'%c')" ${NOTES}
+    vim ${NOTES}
     git diff | grep +todo: | sed "s/+todo:/- [ ] ($DATE):/" >> todo.md
     git diff | grep +progress: | sed "s/+progress:/- progress $DATE:/" >> ppp.md
     git diff | grep +problem: | sed "s/+problem:/- problem $DATE:/" >> ppp.md
