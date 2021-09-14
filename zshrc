@@ -1,18 +1,20 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+source /apollo/env/envImprovement/var/zshrc
+ZSH="$HOME/.oh-my-zsh"
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/jspong/.oh-my-zsh"
+export ZSH="/home/jsspong/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="simple"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
+# a theme from this variable instead of looking in $ZSH/themes/
 # If set to an empty array, this variable will have no effect.
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
@@ -27,7 +29,7 @@ ZSH_THEME="robbyrussell"
 # DISABLE_AUTO_UPDATE="true"
 
 # Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
+DISABLE_UPDATE_PROMPT="true"
 
 # Uncomment the following line to change how often to auto-update (in days).
 # export UPDATE_ZSH_DAYS=13
@@ -64,11 +66,11 @@ ZSH_THEME="robbyrussell"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
 # Which plugins would you like to load?
-# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(aws git docker mvn python sudo vagrant vi-mode)
+plugins=(git vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -98,72 +100,18 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+export PATH=$HOME/.toolbox/bin:$HOME/bin:$PATH
+export PATH="/apollo/env/AmazonAwsCli/bin/:$PATH"
 
-alias dkps="docker ps"
-alias dkst="docker stats"
-alias dkpsa="docker ps -a"
-alias dkimgs="docker images"
-alias dkcpup="docker-compose up -d"
-alias dkcpdown="docker-compose down"
-alias dkcpstart="docker-compose start"
-alias dkcpstop="docker-compose stop"
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PATH=/Users/jspong/bin:$PATH
-[ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
+nvm use --delete-prefix 10 > /dev/null
+alias bb='brazil-build'
+alias gpr='git pull --rebase'
+export PATH=/apollo/env/BarkCLI/bin:$PATH
+#alias java='/local/apollo/package/local_1/AL2012/OpenJDK8/OpenJDK8-2719.0-0/jdk1.8/jre/bin/java'
+alias kinit='/usr/kerberos/bin/kinit -f'
 
-function gitd () {
-    cd "$HOME/github/confluent/$1"
-}
-
-function gpo () {
-    BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
-    git push -u origin ${BRANCH}
-}
-
-function rebase-branch() {
-    BRANCH=${1:-$(git rev-parse --abbrev-ref HEAD)}
-    ROOT=${2:-master}
-    git rebase -i $(git merge-base $ROOT $BRANCH)
-}
-
-function pwb() {
-    git branch | grep '*' | cut -d' ' -f2
-}
-
-function unpushed() {
-    BRANCH=${1:-`pwb`}
-    REMOTE=${2:-origin}
-    git log ${REMOTE}/${BRANCH}..HEAD
-}
-
-function notes() {
-    GITDIR=${HOME}/github/jspong/notes
-    PREV_DIR=$PWD
-    cd $GITDIR
-
-    git commit --all --message="Cleaning up lingering notes" 2>&1 >/dev/null
-
-    1=${1:-today}
-    DATE=$(python -c "from dateparser import parse; print(parse('$1').strftime('%F'))")
-    if [ $? -eq 1 ]
-    then
-        cd $PREV_DIR
-        return 1
-    fi
-
-    NOTES=${DATE}.md
-    touch ${NOTES}
-    git add ${NOTES}
-    vim ${NOTES}
-    git diff | grep +todo: | sed "s/+todo:/- [ ] ($DATE):/" >> todo.md
-    git diff | grep +progress: | sed "s/+progress:/- progress $DATE:/" >> ppp.md
-    git diff | grep +problem: | sed "s/+problem:/- problem $DATE:/" >> ppp.md
-    git diff | grep +plan: | sed "s/+plan:/- plan $DATE:/" >> ppp.md
-    git diff | grep +buy: | sed "s/+buy: \(.*\)/- [ ] \1 <!-- $DATE -->/" >> shopping_list.md
-
-    MSG="Notes for ${DATE:-$1}"
-    git commit --all --message=${2:-$MSG} 2>&1 >/dev/null
-    cd $PREV_DIR
-}
-
-export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+alias sam="brazil-build-tool-exec sam"
